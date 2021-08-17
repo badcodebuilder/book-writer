@@ -1,15 +1,9 @@
 package io.bcb.commands;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-
 import io.bcb.utils.BookGenerator;
 import io.bcb.utils.parser.Parser;
 import io.bcb.utils.parser.TXTParser;
@@ -23,6 +17,10 @@ import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class BookCommand {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -105,7 +103,7 @@ public class BookCommand {
 
         int slot = 0;
         int bookUsedCount = 0;
-        for (ItemStack itemStack : context.getSource().getPlayer().getInventory().main) {
+        for (ItemStack itemStack : context.getSource().getPlayer().inventory.main) {
             if (isWritableBook(itemStack)) {
                 if (!bookGen.getIsBookEnd()) {
                     List<String> book = bookGen.generate();
@@ -116,11 +114,10 @@ public class BookCommand {
 
                     NbtList pages = new NbtList();
                     book.stream().map(NbtString::of).forEach(pages::add);
-                    itemStack.setSubNbt("pages", pages);
+                    itemStack.putSubTag("pages", pages);
 
-                    // XXX: Odd, check in IDEA
                     context.getSource().getClient().getNetworkHandler().sendPacket(
-                        new BookUpdateC2SPacket(slot, book, Optional.empty())
+                        new BookUpdateC2SPacket(itemStack, false, slot)
                     );
                     ++bookUsedCount;
                 } else {

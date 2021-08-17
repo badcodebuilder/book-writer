@@ -1,15 +1,11 @@
 package io.bcb.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.bcb.Constant;
 import io.bcb.utils.parser.Parser;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookGenerator {
     private BufferedReader in;
